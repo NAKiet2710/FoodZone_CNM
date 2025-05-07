@@ -194,9 +194,7 @@
                                 <button type="submit" class="btn btn-primary btn-block">Cập nhật trạng thái</button>
                             </form>
                             <div class="text-center mt-3">
-                                <button id="get-location" class="btn btn-outline-secondary btn-sm">
-                                    <i class="fa fa-map-marker-alt"></i> Lấy vị trí hiện tại
-                                </button>
+                                <!-- Nút lấy vị trí hiện tại đã bị xóa -->
                             </div>
                         </div>
                     </div>
@@ -204,34 +202,7 @@
             </div>
 
             <!-- Map Section -->
-            <div class="row mb-5">
-                <div class="col-lg-12">
-                    <div class="card border-0 shadow">
-                        <div class="card-header bg-info text-white">
-                            <h4 class="mb-0">Bản đồ giao hàng</h4>
-                        </div>
-                        <div class="card-body p-0">
-                            <div id="delivery-map" style="height: 400px;"></div>
-                        </div>
-                        <div class="card-footer">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <small class="text-muted">
-                                        <i class="fa fa-circle text-danger"></i> Vị trí hiện tại
-                                        <i class="fa fa-circle text-primary ml-3"></i> Điểm lấy hàng
-                                        <i class="fa fa-circle text-success ml-3"></i> Điểm giao hàng
-                                    </small>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <button id="refresh-map" class="btn btn-sm btn-outline-secondary">
-                                        <i class="fa fa-sync"></i> Làm mới bản đồ
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Section bản đồ đã được xóa -->
             
             <!-- Active Deliveries -->
             <div class="row mb-5">
@@ -412,156 +383,10 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<!-- Script bản đồ đã được xóa -->
+
 <script>
-    // Biến toàn cục để lưu bản đồ
-    var map;
-    var currentMarker;
-    var destinationMarkers = [];
-
-    function initMap() {
-        // Khởi tạo bản đồ ở vị trí mặc định (TPHCM)
-        var defaultLocation = {lat: 10.762622, lng: 106.660172};
-        
-        map = new google.maps.Map(document.getElementById('delivery-map'), {
-            center: defaultLocation,
-            zoom: 13
-        });
-
-        // Nếu có vị trí hiện tại, hiển thị nó
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                map.setCenter(pos);
-                
-                // Thêm marker cho vị trí hiện tại
-                currentMarker = new google.maps.Marker({
-                    position: pos,
-                    map: map,
-                    title: 'Vị trí hiện tại',
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 10,
-                        fillColor: "#FF0000",
-                        fillOpacity: 1,
-                        strokeWeight: 2,
-                        strokeColor: "#FFFFFF"
-                    }
-                });
-
-                // Hiển thị thông tin vị trí
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({'location': pos}, function(results, status) {
-                    if (status === 'OK' && results[0]) {
-                        document.getElementById('id_current_location').value = results[0].formatted_address;
-                        document.getElementById('location').value = results[0].formatted_address;
-                    }
-                });
-
-                // Thêm các địa điểm giao hàng
-                // Đây là dữ liệu mẫu, bạn sẽ cần thay thế bằng dữ liệu thực từ các đơn hàng
-                var destinations = [
-                    {lat: position.coords.latitude + 0.01, lng: position.coords.longitude - 0.01, title: 'Điểm giao hàng 1', type: 'delivery'},
-                    {lat: position.coords.latitude - 0.01, lng: position.coords.longitude + 0.01, title: 'Điểm giao hàng 2', type: 'delivery'},
-                    {lat: position.coords.latitude + 0.02, lng: position.coords.longitude + 0.02, title: 'Nhà hàng', type: 'restaurant'}
-                ];
-
-                // Thêm các marker điểm giao hàng
-                destinations.forEach(function(dest) {
-                    var markerIcon;
-                    if (dest.type === 'delivery') {
-                        markerIcon = {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 8,
-                            fillColor: "#00FF00",
-                            fillOpacity: 1,
-                            strokeWeight: 2,
-                            strokeColor: "#FFFFFF"
-                        };
-                    } else {
-                        markerIcon = {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 8,
-                            fillColor: "#0000FF",
-                            fillOpacity: 1,
-                            strokeWeight: 2,
-                            strokeColor: "#FFFFFF"
-                        };
-                    }
-
-                    var marker = new google.maps.Marker({
-                        position: {lat: dest.lat, lng: dest.lng},
-                        map: map,
-                        title: dest.title,
-                        icon: markerIcon
-                    });
-
-                    destinationMarkers.push(marker);
-
-                    // Thêm đường dẫn từ vị trí hiện tại đến điểm giao hàng
-                    var line = new google.maps.Polyline({
-                        path: [pos, {lat: dest.lat, lng: dest.lng}],
-                        geodesic: true,
-                        strokeColor: '#FF0000',
-                        strokeOpacity: 0.5,
-                        strokeWeight: 2
-                    });
-
-                    line.setMap(map);
-                });
-            });
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', function() {
-        // Nút lấy vị trí hiện tại
-        document.getElementById('get-location').addEventListener('click', function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var lat = position.coords.latitude;
-                    var lng = position.coords.longitude;
-                    
-                    // Hiển thị thông tin vị trí
-                    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=YOUR_API_KEY`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.results && data.results.length > 0) {
-                                var location = data.results[0].formatted_address;
-                                document.getElementById('id_current_location').value = location;
-
-                                // Cập nhật vị trí trên server
-                                fetch('/update_location/', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                                    },
-                                    body: JSON.stringify({
-                                        latitude: lat,
-                                        longitude: lng,
-                                        location_name: location
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.status === 'success') {
-                                        alert('Vị trí đã được cập nhật!');
-                                    }
-                                });
-                            }
-                        });
-                }, function() {
-                    alert('Không thể xác định vị trí của bạn.');
-                });
-            } else {
-                alert('Trình duyệt của bạn không hỗ trợ Geolocation.');
-            }
-        });
-
         // Xử lý nút cập nhật trạng thái
         document.querySelectorAll('.update-status-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
@@ -569,21 +394,6 @@
                 document.getElementById('status-update-form').action = '/update_delivery_status/' + deliveryId + '/';
                 $('#updateStatusModal').modal('show');
             });
-        });
-
-        // Nút làm mới bản đồ
-        document.getElementById('refresh-map').addEventListener('click', function() {
-            // Xóa tất cả marker hiện tại
-            if (currentMarker) {
-                currentMarker.setMap(null);
-            }
-            
-            destinationMarkers.forEach(function(marker) {
-                marker.setMap(null);
-            });
-            
-            // Khởi tạo lại bản đồ
-            initMap();
         });
 
         // Nút xem tất cả đơn hàng đã hoàn thành

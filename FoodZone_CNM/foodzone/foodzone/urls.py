@@ -19,6 +19,10 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('dish/<int:id>/', views.single_dish, name='dish'),
 
+    # Chatbot URLs
+    path('chatbot/', views.chatbot, name='chatbot'),
+    path('chatbot/query/', views.chatbot_query, name='chatbot_query'),
+
     # Chức năng người giao hàng
     path('register_shipper/', views.register_shipper, name='register_shipper'),
     path('shipper_dashboard/', views.shipper_dashboard, name='shipper_dashboard'),

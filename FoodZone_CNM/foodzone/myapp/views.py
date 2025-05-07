@@ -112,6 +112,9 @@ from django.contrib import messages
 from datetime import datetime, timedelta
 import json
 import uuid
+import google.generativeai as genai
+import requests
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     context ={}
@@ -261,29 +264,28 @@ def dashboard(request):
         defaults={'contact_number': ''}
     )
     
+    # Lấy tất cả các đơn hàng của người dùng, sắp xếp theo thời gian giảm dần (mới nhất trước)
     orders = Order.objects.filter(customer=profile).order_by('-ordered_on')
     
     # Lấy danh sách địa chỉ giao hàng
     addresses = DeliveryAddress.objects.filter(customer=profile).order_by('-is_default')
     
-    # Lấy danh sách đơn hàng đang chờ giao
-    pending_orders = Order.objects.filter(customer=profile, status=True)
-    
-    # Lọc các đơn hàng có giao hàng đang được xử lý
-    pending_orders_with_deliveries = []
-    for order in pending_orders:
+    # Lấy danh sách đơn hàng đang chờ giao (chưa hoàn thành giao hàng)
+    pending_orders = []
+    for order in orders.filter(status=True):  # Chỉ lấy đơn hàng đã thanh toán
         try:
             delivery = Delivery.objects.get(order=order)
-            if delivery.status != 'DE' and delivery.status != 'CA':
-                pending_orders_with_deliveries.append(order)
+            if delivery.status != 'DE' and delivery.status != 'CA':  # Không phải đã giao hoặc đã hủy
+                pending_orders.append(order)
         except Delivery.DoesNotExist:
+            # Đơn hàng chưa có thông tin giao hàng
             pass
     
     context = {
         'profile': profile,
-        'orders': orders,
+        'orders': orders,  # Tất cả các đơn hàng
         'addresses': addresses,
-        'pending_orders': pending_orders_with_deliveries,
+        'pending_orders': pending_orders,
         'total_order': orders.count(),
         'success_order': orders.filter(status=True).count(),
         'pending_order': orders.filter(status=False).count()
@@ -352,25 +354,35 @@ def payment_done(request):
             # Tính thời gian dự kiến giao hàng (1 giờ kể từ khi đặt hàng)
             est_delivery_time = datetime.now() + timedelta(hours=1)
             
-            # Tìm người giao hàng đang rảnh
+            # Tìm người giao hàng đang rảnh - Đảm bảo lấy người giao hàng đầu tiên có trạng thái available
             available_shipper = Shipper.objects.filter(availability_status=True).first()
             
-            # Tạo đơn hàng giao hàng
-            delivery = Delivery.objects.create(
-                order=order,
-                shipper=available_shipper,
-                delivery_address=default_address,
-                status=DeliveryStatus.CONFIRMED,
-                estimated_delivery_time=est_delivery_time,
-                delivery_notes="Đơn hàng mới từ thanh toán trực tuyến"
-            )
+            if not available_shipper:
+                # Nếu không tìm thấy shipper có sẵn, lấy shipper đầu tiên
+                available_shipper = Shipper.objects.first()
             
-            # Tạo log theo dõi đầu tiên
-            DeliveryTracking.objects.create(
-                delivery=delivery,
-                status=DeliveryStatus.CONFIRMED,
-                notes="Đơn hàng đã được xác nhận và đang được chuẩn bị"
-            )
+            if available_shipper:
+                # Tạo đơn hàng giao hàng
+                delivery = Delivery.objects.create(
+                    order=order,
+                    shipper=available_shipper,
+                    delivery_address=default_address,
+                    status='CO',  # Sử dụng string chính xác thay vì DeliveryStatus.CONFIRMED
+                    estimated_delivery_time=est_delivery_time,
+                    delivery_notes="Đơn hàng mới từ thanh toán trực tuyến"
+                )
+                
+                # Tạo log theo dõi đầu tiên
+                DeliveryTracking.objects.create(
+                    delivery=delivery,
+                    status='CO',  # Sử dụng string chính xác thay vì DeliveryStatus.CONFIRMED 
+                    notes="Đơn hàng đã được xác nhận và đang được chuẩn bị"
+                )
+                
+                # In thông tin debug
+                print(f"Created delivery: {delivery.id} for order: {order.id}, assigned to shipper: {available_shipper.user.username}")
+            else:
+                print("Error: No shippers available in the system")
         
     except Exception as e:
         # Xử lý lỗi (có thể ghi log hoặc thông báo cho admin)
@@ -427,26 +439,33 @@ def shipper_dashboard(request):
         shipper = Shipper.objects.get(user=request.user)
         context['shipper'] = shipper
         
-        # Get active deliveries
-        active_deliveries = Delivery.objects.filter(
-            shipper=shipper,
-            status__in=[
-                DeliveryStatus.CONFIRMED,
-                DeliveryStatus.PREPARING,
-                DeliveryStatus.READY_FOR_PICKUP,
-                DeliveryStatus.PICKED_UP,
-                DeliveryStatus.ON_THE_WAY
-            ]
+        # Debug: In thông tin shipper
+        print(f"Shipper: {shipper.user.username} (ID: {shipper.id})")
+        
+        # Lấy tất cả đơn giao hàng của shipper (không lọc status)
+        all_deliveries = Delivery.objects.filter(shipper=shipper)
+        
+        # Debug: In ra tất cả đơn hàng tìm thấy
+        print(f"Found {all_deliveries.count()} deliveries for this shipper")
+        for d in all_deliveries:
+            print(f"  - Delivery ID: {d.id}, Order ID: {d.order.id}, Status: {d.status}")
+        
+        # Get active deliveries - chỉ lấy đơn có status đang thực hiện
+        active_deliveries = all_deliveries.filter(
+            status__in=['CO', 'PR', 'RP', 'PU', 'OW']
         ).order_by('created_at')
         
         # Get completed deliveries
-        completed_deliveries = Delivery.objects.filter(
-            shipper=shipper,
-            status=DeliveryStatus.DELIVERED
+        completed_deliveries = all_deliveries.filter(
+            status='DE'  # Đã giao hàng
         ).order_by('-actual_delivery_time')[:10]
         
         context['active_deliveries'] = active_deliveries
         context['completed_deliveries'] = completed_deliveries
+        
+        # Debug: In số lượng đơn active để xác nhận
+        print(f"Active deliveries: {active_deliveries.count()}")
+        print(f"Completed deliveries: {completed_deliveries.count()}")
         
         # Availability form
         if request.method == "POST":
@@ -462,11 +481,12 @@ def shipper_dashboard(request):
         # Đảm bảo profile tồn tại cho người dùng hiện tại
         profile, created = Profile.objects.get_or_create(
             user=request.user,
-            defaults={'contact_number': shipper.contact_number if shipper.contact_number else ''}
+            defaults={'contact_number': ''}
         )
         
     except Shipper.DoesNotExist:
         context['error'] = "Bạn không phải là người giao hàng"
+        print("Error: User is not a shipper")
     
     return render(request, 'shipper_dashboard.html', context)
 
@@ -717,3 +737,78 @@ def restaurant_dashboard(request):
         context['restaurant_error'] = "Bạn chưa đăng ký nhà hàng. Vui lòng tạo nhà hàng của bạn."
     
     return render(request, 'restaurant_dashboard.html', context)
+
+def chatbot(request):
+    return render(request, 'chatbot.html')
+
+@csrf_exempt
+def chatbot_query(request):
+    if request.method == 'POST':
+        try:
+            # Parse the JSON data from the request
+            data = json.loads(request.body)
+            user_message = data.get('message', '')
+            
+            # Initialize the Gemini API with your API key
+            genai.configure(api_key="AIzaSyBP1TGFEb6-_kWWBrq8xyx7I6GHCsXyLGA")
+            
+            # Get menu data to provide context to the AI
+            dishes = Dish.objects.filter(is_available=True)
+            team_members = Team.objects.all()
+            
+            # Create context about the restaurant, menu and team
+            context = "Thông tin về nhà hàng FoodZone:\n"
+            
+            # Add dish information
+            context += "\nDanh sách món ăn:\n"
+            for dish in dishes:
+                context += f"- {dish.name}: {dish.price} đồng"
+                if dish.discounted_price:
+                    context += f" (giảm giá: {dish.discounted_price} đồng)"
+                context += f". Thành phần: {dish.ingredients}\n"
+            
+            # Add team information
+            context += "\nĐội ngũ đầu bếp:\n"
+            for member in team_members:
+                context += f"- {member.name}: {member.designation}\n"
+            
+            # Set up the model
+            generation_config = {
+                "temperature": 0.7,
+                "top_p": 0.95,
+                "top_k": 0,
+                "max_output_tokens": 1024,
+            }
+            
+            model = genai.GenerativeModel(
+                model_name="gemini-1.5-pro",
+                generation_config=generation_config
+            )
+            
+            # Create the prompt with instructions for the AI
+            prompt = f"""
+            Bạn là trợ lý ảo của nhà hàng FoodZone. Hãy trả lời các câu hỏi của khách hàng về thực đơn, giá cả, 
+            thành phần món ăn, đội ngũ đầu bếp, và các thông tin khác về nhà hàng.
+            
+            Hãy trả lời bằng tiếng Việt, thân thiện và hữu ích. Nếu không biết câu trả lời, hãy đề nghị khách hàng 
+            liên hệ với nhà hàng qua số điện thoại hoặc email.
+            
+            Dưới đây là thông tin về nhà hàng để bạn tham khảo khi trả lời:
+            {context}
+            
+            Câu hỏi của khách hàng: {user_message}
+            """
+            
+            # Generate response
+            response = model.generate_content(prompt)
+            
+            # Return the response as JSON
+            return JsonResponse({'response': response.text})
+        
+        except Exception as e:
+            # Log the error (in a production environment)
+            print(f"Error in chatbot query: {str(e)}")
+            return JsonResponse({'response': 'Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu của bạn. Vui lòng thử lại sau.'}, status=500)
+    
+    # Handle non-POST requests
+    return JsonResponse({'error': 'Phương thức không được hỗ trợ'}, status=405)

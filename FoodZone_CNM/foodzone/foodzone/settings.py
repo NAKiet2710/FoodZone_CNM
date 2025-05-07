@@ -133,7 +133,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR,"media")
 
-PAYPAL_RECEIVER_EMAIL = 'sts.amandeepkaur@gmail.com'
+PAYPAL_RECEIVER_EMAIL = 'sb-j47jm141225183@personal.example.com'
 PAYPAL_TEST = True
+PAYPAL_CLIENT_ID = 'Adh--ea2D8e_SPyGvMoobiOv5_zcmd1cuUgToZHZ0XdZ6rNGnpQEv15QPpiCTLn1DvSC_kshCXrGd9RZ'
+PAYPAL_CLIENT_SECRET = 'EE0dXQAy92PYPXm3Wc7buSHuAoRlt-wDITFWGQoWzi6wDa1zokDxO2ga3rBiQaKqQIq8-fZugbQQFEJJ'
 
 HOST = '127.0.0.1:8000'

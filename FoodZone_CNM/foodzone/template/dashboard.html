@@ -146,32 +146,50 @@
                                
                             </div>
                             <div class="tab-pane " id="orders">
-                             <h4 class="text-center my-2">Order History</h4>
+                             <h4 class="text-center my-2">Lịch sử đơn hàng</h4>
 
                              <ul class="list-group">
                                 {% for order in orders %}
-                                <a href="{% url 'dish' id=order.item.id %}">
+                                {% if order.status == True %}
+                                <a href="{% url 'dish' id=order.item.id %}" class="text-decoration-none">
                                     <li class="list-group-item list-group-item-action">
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <img src="/media/{{order.item.image}}" style="height:70px" class="rounded">
                                             </div>
-                                             <div class="col-md-8">
+                                             <div class="col-md-6">
                                                 <h4>{{order.item.name}}</h4>
                                                 <p>&dollar; {{order.item.discounted_price}}</p>
                                                 <p class="my-0"><small>INVOICE ID: {{order.invoice_id}}</small></p>
                                                 <p class="font-italic"><small>{{order.ordered_on}}</small></p>
                                              </div>  
-                                             <div class="col-md-2">
-                                                 {% if order.status == True %}
-                                                    <button class="btn btn-success btn-sm">Completed</button>
-                                                 {% else %}
-                                                 <button class="btn btn-danger btn-sm">Cancelled</button>
-                                                 {% endif %}
+                                             <div class="col-md-4">
+                                                {% if order.status == True %}
+                                                    <button class="btn btn-success btn-sm">Đã thanh toán</button>
+                                                    
+                                                    {% for delivery in order.delivery_set.all %}
+                                                        {% if delivery.status == 'DE' %}
+                                                            <button class="btn btn-info btn-sm">Đã giao hàng</button>
+                                                            <p class="my-1"><small>Giao ngày: {{ delivery.actual_delivery_time|date:"d/m/Y H:i" }}</small></p>
+                                                        {% elif delivery.status == 'CA' %}
+                                                            <button class="btn btn-danger btn-sm">Đã hủy giao hàng</button>
+                                                        {% else %}
+                                                            <button class="btn btn-warning btn-sm">Đang giao hàng</button>
+                                                            <p class="my-1">
+                                                                <a href="{% url 'track_order' order.id %}" class="btn btn-outline-primary btn-sm">Theo dõi</a>
+                                                            </p>
+                                                        {% endif %}
+                                                    {% empty %}
+                                                        <button class="btn btn-secondary btn-sm">Chờ xử lý</button>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <button class="btn btn-danger btn-sm">Đã hủy</button>
+                                                {% endif %}
                                              </div>
                                         </div>
                                     </li>
-                                    </a>
+                                </a>
+                                {% endif %}
                                 {% endfor %}
                              </ul>
                             </div>

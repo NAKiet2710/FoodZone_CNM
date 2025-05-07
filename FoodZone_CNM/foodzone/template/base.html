@@ -39,21 +39,23 @@
 
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
-                        <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
-                        <a href="{% url 'team' %}" class="nav-item nav-link">Our Team</a>
-                        <a href="{% url 'all_dishes' %}" class="nav-item nav-link">Menu</a>
-                        <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+                        <a href="{% url 'index' %}" class="nav-item nav-link active">Trang chủ</a>
+                        <a href="{% url 'about' %}" class="nav-item nav-link">Giới thiệu</a>
+                        <a href="{% url 'team' %}" class="nav-item nav-link">Đội ngũ</a>
+                        <a href="{% url 'all_dishes' %}" class="nav-item nav-link">Thực đơn</a>
+                        <a href="{% url 'chatbot' %}" class="nav-item nav-link">Tư vấn</a>
+                        <a href="{% url 'contact' %}" class="nav-item nav-link">Liên hệ</a>
                         {% if user.is_authenticated %}
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fas fa-user"></i></a>
                             <div class="dropdown-menu">
                             {% if user.is_superuser or user.is_staff %}
-                                <a href="{% url 'admin:index' %}" class="dropdown-item">Dashboard</a>
+                                <a href="{% url 'admin:index' %}" class="dropdown-item">Quản trị</a>
                             {% else %}
-                                <a href="{% url 'dashboard' %}" class="dropdown-item">Dashboard</a>
+                                <a href="{% url 'dashboard' %}" class="dropdown-item">Trang cá nhân</a>
+                                <a href="{% url 'shipper_dashboard' %}" class="dropdown-item">Trang giao hàng</a>
                             {% endif %}
-                                <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
+                                <a href="{% url 'logout' %}" class="dropdown-item">Đăng xuất</a>
                             </div>
                         </div>
                         {% else %}
@@ -76,10 +78,10 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="footer-contact">
-                                    <h2>Our Address</h2>
-                                    <p><i class="fa fa-map-marker-alt"></i>1 Nguyễn Văn Bảo, Gò Vấp,Tp.HCM</p>
+                                    <h2>Địa chỉ của chúng tôi</h2>
+                                    <p><i class="fa fa-map-marker-alt"></i>1 Nguyễn Văn Bảo, Gò Vấp, Tp.HCM</p>
                                     <p><i class="fa fa-phone-alt"></i>+012 345 67890</p>
-                                    <p><i class="fa fa-envelope"></i>voduchoa4444@example.com</p>
+                                    <p><i class="fa fa-envelope"></i>voduchoa4444@gmail.com</p>
                                     <div class="footer-social">
                                         <a href=""><i class="fab fa-twitter"></i></a>
                                         <a href="https://www.facebook.com/SachTechSol/" target="_blank"><i class="fab fa-facebook-f"></i></a>
@@ -117,8 +119,8 @@
             </div>
             <div class="copyright">
                 <div class="container">
-                    <p>Copyright &copy; <a href="#">Your Site Name</a>, All Right Reserved.</p>
-                    <p>Designed By <a href="https://htmlcodex.com">HTML Codex</a></p>
+                    <p>Bản quyền &copy; <a href="#">Food Zone</a>, Bảo lưu mọi quyền.</p>
+                    <p>Thiết kế bởi <a href="https://htmlcodex.com">HTML Codex</a></p>
                 </div>
             </div>
         </div>
