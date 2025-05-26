@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .nav-link{
+        color:#666666 !important;
+    } 
+    .mu-header, nav,header{
+        background-color: black !important;
+    }
+    .success-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .success-icon {
+        color: #28a745;
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+    .success-title {
+        color: #28a745;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    .success-message {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .order-details {
+        margin: 20px auto;
+        max-width: 500px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: left;
+    }
+    .order-details h4 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    .button-container {
+        margin-top: 20px;
+    }
+    .button-container a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #ffb606;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin: 0 10px;
+    }
+    .button-container a:hover {
+        background-color: #e6a300;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="height: 70px;"></div>
+<div class="container">
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fa fa-check-circle"></i>
+        </div>
+        <div class="success-title">
+            Đơn hàng đã được xác nhận!
+        </div>
+        <div class="success-message">
+            Cảm ơn bạn đã đặt hàng tại FoodZone. Đơn hàng của bạn đã được xác nhận và đang được chuẩn bị.
+            <br>
+            Bạn sẽ thanh toán <strong>bằng tiền mặt khi nhận hàng</strong>.
+        </div>
+        
+        <div class="order-details">
+            <h4>Thông tin đơn hàng</h4>
+            <p><strong>Mã đơn hàng:</strong> #{{ order.order_number }}</p>
+            <p><strong>Ngày đặt hàng:</strong> {{ order.ordered_on|date:"d/m/Y H:i" }}</p>
+            <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng (COD)</p>
+            <p><strong>Ghi chú:</strong> Vui lòng chuẩn bị đúng số tiền khi nhận hàng.</p>
+        </div>
+        
+        <div class="button-container">
+            <a href="{% url 'track_order' order_id=order.order_number %}">Theo dõi đơn hàng</a>
+            <a href="{% url 'index' %}">Tiếp tục mua sắm</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

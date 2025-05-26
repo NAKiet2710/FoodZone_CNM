@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện trang chủ - FoodZone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+        }
+        
+        .container {
+            width: 900px;
+            height: 700px;
+            margin: 20px auto;
+            border: 2px solid #333;
+            background-color: white;
+            position: relative;
+        }
+        
+        .header {
+            height: 80px;
+            border-bottom: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background-color: #87CEEB;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+            padding: 6px 12px;
+            white-space: nowrap;
+        }
+        
+        .main-content {
+            height: calc(100% - 80px);
+            padding: 20px;
+            background-color: white;
+        }
+        
+        .hero-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .hero-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .hero-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .content-box {
+            border: 2px solid #333;
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .content-text {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .bottom-section {
+            display: flex;
+            gap: 15px;
+            height: 200px;
+        }
+        
+        .left-info {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .info-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .info-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .info-text {
+            font-size: 10px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .right-image {
+            flex: 1;
+            border: 2px solid #333;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .caption {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="nav-item">Trang Chủ</span>
+            <span class="nav-item">Giới thiệu</span>
+            <span class="nav-item">Thực đơn</span>
+            <span class="nav-item">Tư vấn</span>
+            <span class="nav-item">Liên hệ</span>
+            <span class="nav-item">Đăng ký ▼</span>
+            <span class="nav-item">Đăng nhập</span>
+        </div>
+        
+        <div class="main-content">
+            <div class="hero-section">
+                <h1 class="hero-title">FOODZONE</h1>
+                <p class="hero-subtitle">HỆ THỐNG ĐẶT MÓN ĂN TRỰC TUYẾN VÀ GIAO HÀNG TẬN NƠI</p>
+            </div>
+            
+            <div class="content-grid">
+                <div class="content-box">
+                    <span class="content-text">Hamburger<br>& Burger</span>
+                </div>
+                <div class="content-box">
+                    <span class="content-text">Pizza<br>Hải Sản</span>
+                </div>
+                <div class="content-box">
+                    <span class="content-text">Snacks<br>& Đồ ăn vặt</span>
+                </div>
+            </div>
+            
+            <div class="bottom-section">
+                <div class="left-info">
+                    <h2 class="info-title">Tìm hiểu thêm</h2>
+                    <h3 class="info-subtitle">về FOODZONE</h3>
+                    <p class="info-text">
+                        Chúng tôi cung cấp dịch vụ đặt món ăn trực tuyến với thực đơn đa dạng từ Hamburger, Pizza, Snacks đến các loại đồ uống. 
+                        Với đội ngũ đầu bếp chuyên nghiệp và nguyên liệu tươi ngon, chúng tôi cam kết mang đến những món ăn chất lượng cao. 
+                        Hệ thống giao hàng nhanh chóng đảm bảo món ăn luôn nóng hổi khi đến tay khách hàng.
+                    </p>
+                </div>
+                <div class="right-image">
+                    🍕 🍔 🥤<br>
+                    Hình ảnh minh họa<br>
+                    FoodZone
+                </div>
+            </div>
+        </div>
+        
+        <div class="caption">Hình 26. Giao diện trang chủ hệ thống</div>
+    </div>
+</body>
+</html> 

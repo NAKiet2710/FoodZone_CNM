@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biểu đồ Database FoodZone - Bố cục sạch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .diagram-svg {
+            width: 100%;
+            height: 900px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .table {
+            fill: white;
+            stroke: #34495e;
+            stroke-width: 2;
+        }
+
+        .table-header {
+            fill: #3498db;
+            stroke: #2980b9;
+            stroke-width: 2;
+        }
+
+        .table-title {
+            fill: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+
+        .field-text {
+            fill: #2c3e50;
+            font-size: 10px;
+            text-anchor: start;
+        }
+
+        .field-type {
+            fill: #7f8c8d;
+            font-size: 9px;
+            text-anchor: end;
+        }
+
+        .pk-field {
+            fill: #e74c3c;
+            font-weight: bold;
+        }
+
+        .fk-field {
+            fill: #27ae60;
+            font-weight: bold;
+        }
+
+        .relationship-line {
+            stroke: #7f8c8d;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+
+        .relationship-text {
+            fill: #34495e;
+            font-size: 10px;
+            text-anchor: middle;
+            font-weight: bold;
+            background: white;
+        }
+
+        .caption {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h1 class="title">Biểu đồ Database Hệ thống FoodZone</h1>
+        
+        <svg class="diagram-svg" viewBox="0 0 1500 850">
+            <!-- Định nghĩa arrow marker -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                        refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d" />
+                </marker>
+            </defs>
+
+            <!-- Hàng 1: User và các bảng liên quan trực tiếp -->
+            
+            <!-- Bảng User (trung tâm hàng 1) -->
+            <g id="user-table">
+                <rect class="table-header" x="600" y="50" width="180" height="25"/>
+                <text class="table-title" x="690" y="67">user</text>
+                
+                <rect class="table" x="600" y="75" width="180" height="120"/>
+                
+                <text class="field-text pk-field" x="610" y="95">id 🔑</text>
+                <text class="field-type" x="770" y="95">int NN</text>
+                
+                <text class="field-text" x="610" y="115">username</text>
+                <text class="field-type" x="770" y="115">varchar NN</text>
+                
+                <text class="field-text" x="610" y="135">email</text>
+                <text class="field-type" x="770" y="135">varchar NN</text>
+                
+                <text class="field-text" x="610" y="155">password</text>
+                <text class="field-type" x="770" y="155">varchar NN</text>
+                
+                <text class="field-text" x="610" y="175">first_name</text>
+                <text class="field-type" x="770" y="175">varchar</text>
+            </g>
+
+            <!-- Bảng Profile (trái User) -->
+            <g id="profile-table">
+                <rect class="table-header" x="50" y="50" width="180" height="25"/>
+                <text class="table-title" x="140" y="67">profile</text>
+                
+                <rect class="table" x="50" y="75" width="180" height="120"/>
+                
+                <text class="field-text pk-field" x="60" y="95">id 🔑</text>
+                <text class="field-type" x="220" y="95">int NN</text>
+                
+                <text class="field-text fk-field" x="60" y="115">user_id</text>
+                <text class="field-type" x="220" y="115">int NN</text>
+                
+                <text class="field-text" x="60" y="135">profile_pic</text>
+                <text class="field-type" x="220" y="135">image</text>
+                
+                <text class="field-text" x="60" y="155">contact_number</text>
+                <text class="field-type" x="220" y="155">varchar(15)</text>
+                
+                <text class="field-text" x="60" y="175">address</text>
+                <text class="field-type" x="220" y="175">text</text>
+            </g>
+
+            <!-- Bảng Restaurant (phải User) -->
+            <g id="restaurant-table">
+                <rect class="table-header" x="850" y="50" width="180" height="25"/>
+                <text class="table-title" x="940" y="67">restaurant</text>
+                
+                <rect class="table" x="850" y="75" width="180" height="140"/>
+                
+                <text class="field-text pk-field" x="860" y="95">id 🔑</text>
+                <text class="field-type" x="1020" y="95">int NN</text>
+                
+                <text class="field-text" x="860" y="115">name</text>
+                <text class="field-type" x="1020" y="115">varchar(255) NN</text>
+                
+                <text class="field-text fk-field" x="860" y="135">owner_id</text>
+                <text class="field-type" x="1020" y="135">int NN</text>
+                
+                <text class="field-text" x="860" y="155">address</text>
+                <text class="field-type" x="1020" y="155">text NN</text>
+                
+                <text class="field-text" x="860" y="175">phone</text>
+                <text class="field-type" x="1020" y="175">varchar(20) NN</text>
+                
+                <text class="field-text" x="860" y="195">email</text>
+                <text class="field-type" x="1020" y="195">email NN</text>
+            </g>
+
+            <!-- Bảng Shipper (phải Restaurant) -->
+            <g id="shipper-table">
+                <rect class="table-header" x="1100" y="50" width="180" height="25"/>
+                <text class="table-title" x="1190" y="67">shipper</text>
+                
+                <rect class="table" x="1100" y="75" width="180" height="140"/>
+                
+                <text class="field-text pk-field" x="1110" y="95">id 🔑</text>
+                <text class="field-type" x="1270" y="95">int NN</text>
+                
+                <text class="field-text fk-field" x="1110" y="115">user_id</text>
+                <text class="field-type" x="1270" y="115">int NN</text>
+                
+                <text class="field-text" x="1110" y="135">vehicle_type</text>
+                <text class="field-type" x="1270" y="135">varchar(50) NN</text>
+                
+                <text class="field-text" x="1110" y="155">vehicle_number</text>
+                <text class="field-type" x="1270" y="155">varchar(20) NN</text>
+                
+                <text class="field-text" x="1110" y="175">license_number</text>
+                <text class="field-type" x="1270" y="175">varchar(50) NN</text>
+                
+                <text class="field-text" x="1110" y="195">rating</text>
+                <text class="field-type" x="1270" y="195">float</text>
+            </g>
+
+            <!-- Hàng 2: Category và Dish -->
+            
+            <!-- Bảng Category -->
+            <g id="category-table">
+                <rect class="table-header" x="300" y="280" width="180" height="25"/>
+                <text class="table-title" x="390" y="297">category</text>
+                
+                <rect class="table" x="300" y="305" width="180" height="120"/>
+                
+                <text class="field-text pk-field" x="310" y="325">id 🔑</text>
+                <text class="field-type" x="470" y="325">int NN</text>
+                
+                <text class="field-text" x="310" y="345">name</text>
+                <text class="field-type" x="470" y="345">varchar(100) NN</text>
+                
+                <text class="field-text" x="310" y="365">image</text>
+                <text class="field-type" x="470" y="365">image</text>
+                
+                <text class="field-text" x="310" y="385">description</text>
+                <text class="field-type" x="470" y="385">text</text>
+                
+                <text class="field-text" x="310" y="405">added_on</text>
+                <text class="field-type" x="470" y="405">datetime NN</text>
+            </g>
+
+            <!-- Bảng Dish -->
+            <g id="dish-table">
+                <rect class="table-header" x="550" y="280" width="180" height="25"/>
+                <text class="table-title" x="640" y="297">dish</text>
+                
+                <rect class="table" x="550" y="305" width="180" height="160"/>
+                
+                <text class="field-text pk-field" x="560" y="325">id 🔑</text>
+                <text class="field-type" x="720" y="325">int NN</text>
+                
+                <text class="field-text" x="560" y="345">name</text>
+                <text class="field-type" x="720" y="345">varchar(200) NN</text>
+                
+                <text class="field-text" x="560" y="365">image</text>
+                <text class="field-type" x="720" y="365">image</text>
+                
+                <text class="field-text" x="560" y="385">ingredients</text>
+                <text class="field-type" x="720" y="385">text</text>
+                
+                <text class="field-text fk-field" x="560" y="405">category_id</text>
+                <text class="field-type" x="720" y="405">int NN</text>
+                
+                <text class="field-text fk-field" x="560" y="425">restaurant_id</text>
+                <text class="field-type" x="720" y="425">int</text>
+                
+                <text class="field-text" x="560" y="445">price</text>
+                <text class="field-type" x="720" y="445">float NN</text>
+            </g>
+
+            <!-- Hàng 3: Order và OrderItem -->
+            
+            <!-- Bảng Order -->
+            <g id="order-table">
+                <rect class="table-header" x="50" y="520" width="180" height="25"/>
+                <text class="table-title" x="140" y="537">order</text>
+                
+                <rect class="table" x="50" y="545" width="180" height="140"/>
+                
+                <text class="field-text pk-field" x="60" y="565">id 🔑</text>
+                <text class="field-type" x="220" y="565">int NN</text>
+                
+                <text class="field-text fk-field" x="60" y="585">customer_id</text>
+                <text class="field-type" x="220" y="585">int NN</text>
+                
+                <text class="field-text" x="60" y="605">status</text>
+                <text class="field-type" x="220" y="605">boolean</text>
+                
+                <text class="field-text" x="60" y="625">payment_method</text>
+                <text class="field-type" x="220" y="625">varchar(20)</text>
+                
+                <text class="field-text" x="60" y="645">ordered_on</text>
+                <text class="field-type" x="220" y="645">datetime NN</text>
+                
+                <text class="field-text" x="60" y="665">invoice_id</text>
+                <text class="field-type" x="220" y="665">varchar(100)</text>
+            </g>
+
+            <!-- Bảng OrderItem -->
+            <g id="orderitem-table">
+                <rect class="table-header" x="300" y="520" width="180" height="25"/>
+                <text class="table-title" x="390" y="537">order_item</text>
+                
+                <rect class="table" x="300" y="545" width="180" height="120"/>
+                
+                <text class="field-text pk-field" x="310" y="565">id 🔑</text>
+                <text class="field-type" x="470" y="565">int NN</text>
+                
+                <text class="field-text fk-field" x="310" y="585">order_id</text>
+                <text class="field-type" x="470" y="585">int NN</text>
+                
+                <text class="field-text fk-field" x="310" y="605">dish_id</text>
+                <text class="field-type" x="470" y="605">int NN</text>
+                
+                <text class="field-text" x="310" y="625">quantity</text>
+                <text class="field-type" x="470" y="625">int NN</text>
+                
+                <text class="field-text" x="310" y="645">price</text>
+                <text class="field-type" x="470" y="645">float NN</text>
+            </g>
+
+            <!-- Hàng 4: Delivery và DeliveryAddress -->
+            
+            <!-- Bảng Delivery -->
+            <g id="delivery-table">
+                <rect class="table-header" x="550" y="520" width="180" height="25"/>
+                <text class="table-title" x="640" y="537">delivery</text>
+                
+                <rect class="table" x="550" y="545" width="180" height="140"/>
+                
+                <text class="field-text pk-field" x="560" y="565">id 🔑</text>
+                <text class="field-type" x="720" y="565">int NN</text>
+                
+                <text class="field-text fk-field" x="560" y="585">order_id</text>
+                <text class="field-type" x="720" y="585">int NN</text>
+                
+                <text class="field-text fk-field" x="560" y="605">shipper_id</text>
+                <text class="field-type" x="720" y="605">int</text>
+                
+                <text class="field-text fk-field" x="560" y="625">delivery_address_id</text>
+                <text class="field-type" x="720" y="625">int NN</text>
+                
+                <text class="field-text" x="560" y="645">status</text>
+                <text class="field-type" x="720" y="645">varchar(2) NN</text>
+                
+                <text class="field-text" x="560" y="665">estimated_time</text>
+                <text class="field-type" x="720" y="665">datetime</text>
+            </g>
+
+            <!-- Bảng DeliveryAddress -->
+            <g id="delivery-address-table">
+                <rect class="table-header" x="800" y="520" width="180" height="25"/>
+                <text class="table-title" x="890" y="537">delivery_address</text>
+                
+                <rect class="table" x="800" y="545" width="180" height="140"/>
+                
+                <text class="field-text pk-field" x="810" y="565">id 🔑</text>
+                <text class="field-type" x="970" y="565">int NN</text>
+                
+                <text class="field-text fk-field" x="810" y="585">customer_id</text>
+                <text class="field-type" x="970" y="585">int NN</text>
+                
+                <text class="field-text" x="810" y="605">address_line1</text>
+                <text class="field-type" x="970" y="605">varchar(255) NN</text>
+                
+                <text class="field-text" x="810" y="625">city</text>
+                <text class="field-type" x="970" y="625">varchar(100) NN</text>
+                
+                <text class="field-text" x="810" y="645">postal_code</text>
+                <text class="field-type" x="970" y="645">varchar(20) NN</text>
+                
+                <text class="field-text" x="810" y="665">is_default</text>
+                <text class="field-type" x="970" y="665">boolean</text>
+            </g>
+
+            <!-- Bảng Contact (độc lập) -->
+            <g id="contact-table">
+                <rect class="table-header" x="1050" y="520" width="180" height="25"/>
+                <text class="table-title" x="1140" y="537">contact</text>
+                
+                <rect class="table" x="1050" y="545" width="180" height="120"/>
+                
+                <text class="field-text pk-field" x="1060" y="565">id 🔑</text>
+                <text class="field-type" x="1220" y="565">int NN</text>
+                
+                <text class="field-text" x="1060" y="585">name</text>
+                <text class="field-type" x="1220" y="585">varchar(250) NN</text>
+                
+                <text class="field-text" x="1060" y="605">email</text>
+                <text class="field-type" x="1220" y="605">email NN</text>
+                
+                <text class="field-text" x="1060" y="625">subject</text>
+                <text class="field-type" x="1220" y="625">varchar(250) NN</text>
+                
+                <text class="field-text" x="1060" y="645">message</text>
+                <text class="field-type" x="1220" y="645">text NN</text>
+            </g>
+
+            <!-- Relationships - Đường thẳng đơn giản -->
+            
+            <!-- User -> Profile (1:1) -->
+            <line class="relationship-line" x1="600" y1="135" x2="230" y2="135"/>
+            <text class="relationship-text" x="415" y="130">1:1</text>
+
+            <!-- User -> Restaurant (1:1) -->
+            <line class="relationship-line" x1="780" y1="135" x2="850" y2="135"/>
+            <text class="relationship-text" x="815" y="130">1:1</text>
+
+            <!-- User -> Shipper (1:1) -->
+            <line class="relationship-line" x1="780" y1="115" x2="1100" y2="115"/>
+            <text class="relationship-text" x="940" y="110">1:1</text>
+
+            <!-- Category -> Dish (1:N) -->
+            <line class="relationship-line" x1="480" y1="365" x2="550" y2="365"/>
+            <text class="relationship-text" x="515" y="360">1:N</text>
+
+            <!-- Restaurant -> Dish (1:N) -->
+            <line class="relationship-line" x1="940" y1="215" x2="940" y2="250"/>
+            <line class="relationship-line" x1="940" y1="250" x2="640" y2="250"/>
+            <line class="relationship-line" x1="640" y1="250" x2="640" y2="280"/>
+            <text class="relationship-text" x="790" y="245">1:N</text>
+
+            <!-- Profile -> Order (1:N) -->
+            <line class="relationship-line" x1="140" y1="195" x2="140" y2="520"/>
+            <text class="relationship-text" x="155" y="357">1:N</text>
+
+            <!-- Order -> OrderItem (1:N) -->
+            <line class="relationship-line" x1="230" y1="605" x2="300" y2="605"/>
+            <text class="relationship-text" x="265" y="600">1:N</text>
+
+            <!-- Dish -> OrderItem (1:N) -->
+            <line class="relationship-line" x1="640" y1="465" x2="640" y2="490"/>
+            <line class="relationship-line" x1="640" y1="490" x2="390" y2="490"/>
+            <line class="relationship-line" x1="390" y1="490" x2="390" y2="520"/>
+            <text class="relationship-text" x="515" y="485">1:N</text>
+
+            <!-- Order -> Delivery (1:1) -->
+            <line class="relationship-line" x1="230" y1="625" x2="550" y2="625"/>
+            <text class="relationship-text" x="390" y="620">1:1</text>
+
+            <!-- Shipper -> Delivery (1:N) -->
+            <line class="relationship-line" x1="1190" y1="215" x2="1190" y2="480"/>
+            <line class="relationship-line" x1="1190" y1="480" x2="640" y2="480"/>
+            <line class="relationship-line" x1="640" y1="480" x2="640" y2="520"/>
+            <text class="relationship-text" x="915" y="475">1:N</text>
+
+            <!-- Profile -> DeliveryAddress (1:N) -->
+            <line class="relationship-line" x1="140" y1="195" x2="140" y2="240"/>
+            <line class="relationship-line" x1="140" y1="240" x2="890" y2="240"/>
+            <line class="relationship-line" x1="890" y1="240" x2="890" y2="520"/>
+            <text class="relationship-text" x="515" y="235">1:N</text>
+
+            <!-- DeliveryAddress -> Delivery (1:N) -->
+            <line class="relationship-line" x1="800" y1="605" x2="730" y2="605"/>
+            <text class="relationship-text" x="765" y="600">1:N</text>
+        </svg>
+
+        <div class="caption">
+            Hình 1. Biểu đồ cơ sở dữ liệu hệ thống FoodZone
+        </div>
+    </div>
+</body>
+</html> 

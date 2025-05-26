@@ -1,0 +1,59 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block head %}
+<style>
+    body {
+        padding-top: 150px !important;
+    }
+    .navbar {
+        z-index: 1030;
+    }
+    .navbar-fixed-top {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+    .content-container {
+        margin-top: 150px !important;
+        padding-top: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card border-0">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">Xác nhận xóa món ăn</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <h5>Bạn có chắc chắn muốn xóa món ăn này?</h5>
+                            <p><strong>Tên món:</strong> {{ dish.name }}</p>
+                            <p><strong>Danh mục:</strong> {{ dish.category.name }}</p>
+                            <p><strong>Giá:</strong> {{ dish.price }}</p>
+                            <p>Hành động này không thể hoàn tác.</p>
+                        </div>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Xác nhận xóa
+                                </button>
+                                <a href="{% url 'manage_dishes' %}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Hủy bỏ
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện đăng nhập - FoodZone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+        }
+        
+        .container {
+            width: 800px;
+            height: 500px;
+            margin: 50px auto;
+            border: 2px solid #333;
+            background-color: white;
+            position: relative;
+        }
+        
+        .header {
+            height: 80px;
+            border-bottom: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background-color: #87CEEB;
+            padding: 0 20px;
+        }
+        
+        .nav-item {
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+            padding: 8px 15px;
+            white-space: nowrap;
+        }
+        
+        .main-content {
+            height: calc(100% - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+        }
+        
+        .login-form {
+            width: 300px;
+            padding: 30px;
+            border: 2px solid #333;
+            border-radius: 20px;
+            background-color: white;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .login-btn {
+            width: 120px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 2px solid #333;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .caption {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="nav-item">Trang chủ</span>
+            <span class="nav-item">Giới thiệu</span>
+            <span class="nav-item">Thực đơn</span>
+            <span class="nav-item">Tư vấn</span>
+            <span class="nav-item">Liên hệ</span>
+            <span class="nav-item">Đăng ký ▼</span>
+            <span class="nav-item">Đăng nhập</span>
+        </div>
+        
+        <div class="main-content">
+            <div class="login-form">
+                <div class="logo">FOODZONE</div>
+                
+                <div class="form-group">
+                    <input type="email" class="form-input" placeholder="Email" />
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="Mật khẩu" />
+                </div>
+                
+                <button class="login-btn">Đăng nhập</button>
+            </div>
+        </div>
+        
+        <div class="caption">Hình 24. Giao diện đăng nhập hệ thống</div>
+    </div>
+</body>
+</html> 

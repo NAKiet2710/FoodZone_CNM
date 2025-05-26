@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Page Header Start -->
+<div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>{{dish.name}}</h2>
+            </div>
+            <div class="col-12">
+                <a href="/dishes/?q={{dish.category.id}}">{{dish.category.name}}</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Debug Messages -->
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Food Start -->
+<div style="height: 70px;"></div>
+<div class="food mt-0">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 mx-auto">
+                <div class="food-item">
+                   
+                    <a href="/media/{{dish.image}}" target="_blank"><img src="/media/{{dish.image}}" style="height: 300px;width: 100%;"></a>
+                    <h2 class="my-3">{{dish.name}}</h2>
+                    <p>
+                        {{dish.details}}
+                    </p>
+                    <h4 class="menu-text" style="font-weight: normal;">
+                        {% if dish.price != dish.discounted_price %}
+                            <strong><del>{{dish.price|floatformat:0}}₫</del></strong>
+                        {% endif %}
+                            <strong>{{dish.discounted_price|floatformat:0}}₫</strong>
+                    </h4>
+                    <p>
+                        <script>
+                            var ing = '{{dish.ingredients}}'.split(',');
+                            for(ingredient in ing){
+                                document.write("<span class='btn btn-sm mr-1 mb-1 btn-outline-success'>"+ing[ingredient]+"</span>");
+                            }
+                        </script>
+                    </p>
+                    {% if dish.is_available %}
+
+                    {% if user.is_superuser or user.is_staff %}
+                        <a href="{% url 'admin:myapp_dish_change' dish.id %}" class="btn btn-warning">Chỉnh sửa món</a>
+                    {% elif user.is_active %}
+                        {% if address_required %}
+                            <div class="alert alert-warning">
+                                <p>Bạn cần thêm địa chỉ giao hàng trước khi đặt hàng</p>
+                                <a href="{% url 'manage_addresses' %}" class="btn btn-primary mt-2">Thêm địa chỉ</a>
+                            </div>
+                        {% elif can_order %}
+                            <div class="payment-methods mt-3">
+                                <h4>Chọn phương thức đặt hàng</h4>
+                                
+                                <div class="payment-option mb-3">
+                                    <h5>Thanh toán tiền mặt khi nhận hàng (COD)</h5>
+                                    <p>Thanh toán bằng tiền mặt khi nhận hàng</p>
+                                    <form method="post" action="?payment_method=cash">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-block">
+                                            Đặt hàng COD
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <div class="payment-option mb-3">
+                                    <h5>Thanh toán qua PayPal</h5>
+                                    <p class="text-info"><small><i>Lưu ý: PayPal sẽ hiển thị giá trị bằng USD (tương đương với {{dish.discounted_price|floatformat:0}}đ)</i></small></p>
+                                    <form method="post" action="?payment_method=paypal" class="text-center">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn" style="background: none; border: none; padding: 0;">
+                                            <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/buy-logo-large.png" alt="Buy Now">
+                                        </button>
+                                        <div class="mt-2">
+                                            <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/cc-badges-ppmcvdam.png" alt="Credit Card Badges">
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <div class="payment-option mb-3">
+                                    <h5>Thêm vào giỏ hàng</h5>
+                                    <p>Thêm món ăn vào giỏ hàng để đặt nhiều món cùng lúc</p>
+                                    <form method="post" action="">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            <i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <a href="{% url 'view_cart' %}" class="btn btn-outline-primary mt-2 btn-block">
+                                    <i class="fa fa-shopping-basket"></i> Xem giỏ hàng
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary">Đăng nhập để đặt hàng</a>
+                    {% endif %}
+                    {% else %}
+                        <p class="text-danger">Not Available for delivery!</p>
+                    {% endif %}
+
+                    <a href="/dishes/?q={{dish.category.id}}">More Dishes under {{dish.category.name}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Food End -->
+{% endblock %}

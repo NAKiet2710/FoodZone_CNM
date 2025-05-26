@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodZone - Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 600px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #ff6b35;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.bot .message-content {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .message.user .message-content {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            background: white;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            padding: 10px 20px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .send-btn:hover {
+            background: #e55a2b;
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            FoodZone - Chatbot Hỗ Trợ
+        </div>
+        
+        <div class="chat-body">
+            <div class="message bot">
+                <div class="message-content">
+                    Xin chào! Tôi là chatbot của FoodZone. Tôi có thể giúp bạn tìm món ăn và hỗ trợ đặt hàng. Bạn cần gì hôm nay?
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="message-content">
+                    Tôi muốn xem menu pizza
+                </div>
+            </div>
+
+            <div class="message bot">
+                <div class="message-content">
+                    Dưới đây là menu pizza của FoodZone:<br><br>
+                    🍕 Pizza Margherita - 150.000đ<br>
+                    🍕 Pizza Pepperoni - 180.000đ<br>
+                    🍕 Pizza Hải Sản - 220.000đ<br>
+                    🍕 Pizza Thập Cẩm - 200.000đ<br><br>
+                    Bạn muốn biết thêm về món nào?
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="message-content">
+                    Pizza Hải Sản có gì?
+                </div>
+            </div>
+
+            <div class="message bot">
+                <div class="message-content">
+                    Pizza Hải Sản (220.000đ) bao gồm:<br><br>
+                    • Tôm tươi<br>
+                    • Mực tươi<br>
+                    • Cá hồi hun khói<br>
+                    • Phô mai Mozzarella<br>
+                    • Sốt cà chua đặc biệt<br><br>
+                    Bạn có muốn đặt món này không?
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" class="input-box" placeholder="Nhập tin nhắn...">
+            <button class="send-btn">Gửi</button>
+        </div>
+    </div>
+
+    <div class="caption">Hình 29: Giao diện Chatbot hỗ trợ khách hàng</div>
+</body>
+</html> 

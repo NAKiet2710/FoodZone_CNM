@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<style>
+    .message-container {
+        margin: 80px auto;
+        max-width: 800px;
+        padding: 30px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .message-title {
+        color: #20212b;
+        margin-bottom: 20px;
+    }
+    .message-content {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+    .contact-info {
+        background-color: #f1f1f1;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="message-container">
+        <h2 class="message-title">Chỉ Admin mới có thể tạo tài khoản nhà hàng</h2>
+        <div class="message-content">
+            <p>Để đảm bảo tính chính xác và an toàn, việc đăng ký tài khoản nhà hàng mới chỉ có thể được thực hiện bởi người quản trị hệ thống (Admin).</p>
+            
+            <p>Nếu bạn muốn đăng ký nhà hàng của mình trên hệ thống FoodZone, vui lòng liên hệ với quản trị viên qua các kênh sau:</p>
+            
+            <div class="contact-info">
+                <p><strong>Email:</strong> admin@foodzone.com</p>
+                <p><strong>Điện thoại:</strong> +84 123 456 789</p>
+            </div>
+            
+            <p>Quản trị viên sẽ hỗ trợ tạo tài khoản nhà hàng cho bạn và hướng dẫn cách sử dụng hệ thống.</p>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'index' %}" class="btn btn-primary">Quay về trang chủ</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

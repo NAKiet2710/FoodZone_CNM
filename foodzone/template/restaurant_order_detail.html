@@ -1,0 +1,303 @@
+{% extends 'base1.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block head %}
+<style>
+    body {
+        padding-top: 150px !important;
+    }
+    .navbar {
+        z-index: 1030;
+    }
+    .navbar-fixed-top {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+    .content-container {
+        margin-top: 150px !important;
+        padding-top: 30px;
+    }
+    .badge {
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 85%;
+    }
+    .badge.bg-success {
+        background-color: #28a745 !important;
+        color: white;
+    }
+    .badge.bg-info {
+        background-color: #17a2b8 !important;
+        color: white;
+    }
+    .badge.bg-primary {
+        background-color: #007bff !important;
+        color: white;
+    }
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: black;
+    }
+    .badge.bg-danger {
+        background-color: #dc3545 !important;
+        color: white;
+    }
+    .badge.bg-secondary {
+        background-color: #6c757d !important;
+        color: white;
+    }
+    
+    /* Thêm style cho form cập nhật trạng thái */
+    .status-update-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .status-update-card .card-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+    
+    .status-update-card .card-body {
+        padding: 20px;
+    }
+    
+    .quick-update-btn {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <div class="card border-0 mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Chi tiết đơn hàng #{{ order.order_number }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Thông tin đơn hàng</h5>
+                                <p><strong>Mã đơn:</strong> #{{ order.order_number }}</p>
+                                <p><strong>Khách hàng:</strong> {{ order.customer.user.first_name }} {{ order.customer.user.last_name }}</p>
+                                <p><strong>Ngày đặt:</strong> {{ order.ordered_on|date:"d/m/Y H:i" }}</p>
+                                <p><strong>Trạng thái:</strong> 
+                                    {% if order.status %}
+                                        <span class="badge bg-success">Đã thanh toán</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Chưa thanh toán</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            
+                            {% if delivery %}
+                            <div class="col-md-6">
+                                <h5>Thông tin giao hàng</h5>
+                                <p><strong>Địa chỉ:</strong> {{ delivery.delivery_address.address_line1 }}, {{ delivery.delivery_address.city }}</p>
+                                <p><strong>Shipper:</strong> {% if delivery.shipper %}{{ delivery.shipper.user.first_name }}{% else %}Chưa phân công{% endif %}</p>
+                                <p><strong>Trạng thái giao hàng:</strong> 
+                                    <span class="badge 
+                                    {% if delivery.status == 'PE' %}bg-secondary
+                                    {% elif delivery.status == 'CO' %}bg-info
+                                    {% elif delivery.status == 'PR' %}bg-primary
+                                    {% elif delivery.status == 'RP' %}bg-warning
+                                    {% elif delivery.status == 'PU' %}bg-warning
+                                    {% elif delivery.status == 'OW' %}bg-info
+                                    {% elif delivery.status == 'DE' %}bg-success
+                                    {% elif delivery.status == 'CA' %}bg-danger{% endif %}">
+                                    {{ delivery.get_status_display }}
+                                    </span>
+                                </p>
+                                <p><strong>Thời gian dự kiến:</strong> {% if delivery.estimated_delivery_time %}{{ delivery.estimated_delivery_time|date:"d/m/Y H:i" }}{% else %}Chưa xác định{% endif %}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <h5 class="mt-4">Danh sách món ăn</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Món ăn</th>
+                                        <th>Giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order_items %}
+                                    <tr>
+                                        <td>{{ item.dish.name }}</td>
+                                        <td>{{ item.price|floatformat:0 }} đ</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>{{ item.price|multiply:item.quantity|floatformat:0 }} đ</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr class="table-active">
+                                        <td colspan="3" class="text-end"><strong>Tổng cộng:</strong></td>
+                                        <td><strong>{{ total_amount|floatformat:0 }} đ</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {% if tracking_logs %}
+                        <h5 class="mt-4">Lịch sử giao hàng</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Trạng thái</th>
+                                        <th>Vị trí</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in tracking_logs %}
+                                    <tr>
+                                        <td>{{ log.timestamp|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <span class="badge 
+                                            {% if log.status == 'PE' %}bg-secondary
+                                            {% elif log.status == 'CO' %}bg-info
+                                            {% elif log.status == 'PR' %}bg-primary
+                                            {% elif log.status == 'RP' %}bg-warning
+                                            {% elif log.status == 'PU' %}bg-warning
+                                            {% elif log.status == 'OW' %}bg-info
+                                            {% elif log.status == 'DE' %}bg-success
+                                            {% elif log.status == 'CA' %}bg-danger{% endif %}">
+                                            {{ log.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ log.location|default:"--" }}</td>
+                                        <td>{{ log.notes|default:"--" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'restaurant_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Thêm phần cập nhật trạng thái cho nhà hàng -->
+            <div class="col-lg-4">
+                {% if delivery and delivery.status != 'DE' and delivery.status != 'CA' and delivery.status != 'RP' and delivery.status != 'PU' and delivery.status != 'OW' %}
+                <div class="status-update-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Cập nhật trạng thái đơn hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'update_restaurant_delivery_status' delivery.id %}">
+                            {% csrf_token %}
+                            
+                            <div class="form-group mb-3">
+                                <label for="id_status">Trạng thái mới</label>
+                                {{ status_form.status }}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="id_delivery_notes">Ghi chú</label>
+                                {{ status_form.delivery_notes }}
+                                <small class="text-muted">Ghi chú sẽ được hiển thị cho khách hàng và shipper</small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block w-100">Cập nhật trạng thái</button>
+                        </form>
+                        
+                        <hr>
+                        
+                        <h5>Cập nhật nhanh</h5>
+                        
+                        <!-- Nút cập nhật nhanh cho các trạng thái -->
+                        {% if delivery.status == 'PE' or delivery.status == 'CO' %}
+                        <form method="post" action="{% url 'update_restaurant_delivery_status' delivery.id %}" class="quick-update-btn">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="PR">
+                            <input type="hidden" name="delivery_notes" value="Đơn hàng đang được chuẩn bị">
+                            <button type="submit" class="btn btn-primary btn-block w-100 mb-2">
+                                <i class="fas fa-utensils"></i> Đang chuẩn bị
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if delivery.status == 'PR' %}
+                        <form method="post" action="{% url 'update_restaurant_delivery_status' delivery.id %}" class="quick-update-btn">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="RP">
+                            <input type="hidden" name="delivery_notes" value="Đơn hàng đã sẵn sàng để lấy">
+                            <button type="submit" class="btn btn-warning btn-block w-100 mb-2">
+                                <i class="fas fa-box"></i> Sẵn sàng lấy hàng
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        
+                    </div>
+                </div>
+                {% elif delivery and delivery.status == 'DE' %}
+                <div class="alert alert-success">
+                    <h5 class="alert-heading">Đơn hàng đã hoàn thành</h5>
+                    <p>Đơn hàng này đã được giao thành công. Bạn không thể cập nhật trạng thái đơn hàng nữa.</p>
+                </div>
+                {% elif delivery and delivery.status == 'CA' %}
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">Đơn hàng đã bị hủy</h5>
+                    <p>Đơn hàng này đã bị hủy. Bạn không thể cập nhật trạng thái đơn hàng nữa.</p>
+                </div>
+                {% elif delivery and delivery.status == 'RP' %}
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Đơn hàng sẵn sàng để lấy</h5>
+                    <p>Đơn hàng này đã sẵn sàng để lấy. Các bước tiếp theo sẽ được xử lý bởi shipper.</p>
+                </div>
+                {% elif delivery and delivery.status == 'PU' or delivery.status == 'OW' %}
+                <div class="alert alert-warning">
+                    <h5 class="alert-heading">Đơn hàng đang được giao</h5>
+                    <p>Đơn hàng này đang được shipper vận chuyển. Không thể cập nhật trạng thái từ phía nhà hàng.</p>
+                </div>
+                {% endif %}
+                
+                <!-- Thông tin khách hàng -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Thông tin khách hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Tên:</strong> {{ order.customer.user.first_name }} {{ order.customer.user.last_name }}</p>
+                        <p><strong>Email:</strong> {{ order.customer.user.email }}</p>
+                        <p><strong>Số điện thoại:</strong> {{ order.customer.contact_number }}</p>
+                        
+                        {% if delivery %}
+                        <h6 class="mt-3">Địa chỉ giao hàng:</h6>
+                        <address>
+                            {{ delivery.delivery_address.address_line1 }}<br>
+                            {% if delivery.delivery_address.address_line2 %}{{ delivery.delivery_address.address_line2 }}<br>{% endif %}
+                            {{ delivery.delivery_address.city }}, {{ delivery.delivery_address.state }}<br>
+                            {{ delivery.delivery_address.postal_code }}
+                        </address>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

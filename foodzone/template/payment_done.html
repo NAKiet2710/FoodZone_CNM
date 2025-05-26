@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .success-container {
+        padding: 40px 20px;
+        text-align: center;
+    }
+    .success-icon {
+        font-size: 80px;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+    .order-details {
+        margin-top: 30px;
+        padding: 20px;
+        border: 1px solid #eee;
+        border-radius: 5px;
+    }
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    .shipping-info {
+        margin-top: 30px;
+        padding: 20px;
+        border: 1px solid #eee;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="mu-contact" style="padding-top:100px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mu-contact-area">
+                    <div class="mu-heading-area text-center">
+                        <h2 class="mu-heading-title">Thanh toán thành công</h2>
+                        <span class="mu-header-dot"></span>
+                    </div>
+
+                    <div class="mu-contact-content">
+                        <div class="success-container">
+                            <div class="success-icon">
+                                <i class="fa fa-check-circle"></i>
+                            </div>
+                            <h3>Cảm ơn bạn đã đặt hàng!</h3>
+                            <p>Đơn hàng của bạn đã được xác nhận và đang được xử lý.</p>
+                            
+                            {% if order %}
+                            <div class="order-details">
+                                <h4>Chi tiết đơn hàng #{{ order.order_number }}</h4>
+                                <p><strong>Mã đơn hàng:</strong> #{{ order.order_number }}</p>
+                                <p><strong>Thời gian đặt:</strong> {{ order.ordered_on|date:"d/m/Y H:i" }}</p>
+                                <p><strong>Phương thức thanh toán:</strong> 
+                                    {% if order.payment_method == 'paypal' %}
+                                        PayPal
+                                    {% else %}
+                                        Tiền mặt khi nhận hàng (COD)
+                                    {% endif %}
+                                </p>
+                                <p><strong>Trạng thái thanh toán:</strong> 
+                                    {% if order.status %}
+                                        <span class="text-success">Đã thanh toán</span>
+                                    {% else %}
+                                        <span class="text-warning">Chưa thanh toán</span>
+                                    {% endif %}
+                                </p>
+                                
+                                <hr>
+                                <h5>Danh sách món</h5>
+                                {% for item in order.items.all %}
+                                <div class="order-item">
+                                    <span>{{ item.dish.name }} x {{ item.quantity }}</span>
+                                    <span>{{ item.price|floatformat:0 }}₫</span>
+                                </div>
+                                {% endfor %}
+                                
+                                <div class="order-item" style="font-weight: bold;">
+                                    <span>Tổng tiền:</span>
+                                    <span>{{ order.items.all|dictsort:"price"|last|floatformat:0 }}₫</span>
+                                </div>
+                            </div>
+                            
+                            <div class="shipping-info">
+                                <h4>Thông tin giao hàng</h4>
+                                {% for delivery in order.delivery_set.all %}
+                                <p><strong>Người giao hàng:</strong> {{ delivery.shipper.user.first_name }}</p>
+                                <p><strong>Địa chỉ giao hàng:</strong> {{ delivery.delivery_address.address_line1 }}, {{ delivery.delivery_address.city }}</p>
+                                <p><strong>Thời gian dự kiến:</strong> {{ delivery.estimated_delivery_time|date:"d/m/Y H:i" }}</p>
+                                <p><strong>Trạng thái:</strong> 
+                                    {% if delivery.status == 'DE' %}
+                                    <span class="badge badge-success">Đã giao hàng</span>
+                                    {% elif delivery.status == 'CA' %}
+                                    <span class="badge badge-danger">Đã hủy</span>
+                                    {% else %}
+                                    <span class="badge badge-warning">Đang xử lý</span>
+                                    {% endif %}
+                                </p>
+                                {% empty %}
+                                <p>Đơn hàng của bạn đang được chuẩn bị để giao.</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mt-4">
+                                <a href="{% url 'dashboard' %}" class="btn custom-btn">Xem đơn hàng của tôi</a>
+                                <a href="{% url 'index' %}" class="btn btn-outline-secondary">Tiếp tục mua sắm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

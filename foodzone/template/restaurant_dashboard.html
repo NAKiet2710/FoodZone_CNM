@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block head %}
+<style>
+    .restaurant-header {
+        background-color: #f8f9fa;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        margin-top: 80px;
+    }
+    .stats-card {
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .stats-card h3 {
+        font-size: 16px;
+        color: #555;
+    }
+    .stats-card h2 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .order-card {
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    .section-title {
+        margin: 30px 0 20px;
+        border-bottom: 2px solid #FEA116;
+        padding-bottom: 10px;
+        color: #20212b;
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .table-container {
+        margin-bottom: 40px;
+    }
+    .badge {
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 85%;
+    }
+    .badge.bg-success {
+        background-color: #28a745 !important;
+        color: white;
+    }
+    .badge.bg-info {
+        background-color: #17a2b8 !important;
+        color: white;
+    }
+    .badge.bg-primary {
+        background-color: #007bff !important;
+        color: white;
+    }
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: black;
+    }
+    .badge.bg-danger {
+        background-color: #dc3545 !important;
+        color: white;
+    }
+    .badge.bg-secondary {
+        background-color: #6c757d !important;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="restaurant-header">
+    <div class="container">
+        <h1 class="text-center">Quản Lý Nhà Hàng</h1>
+        <h3 class="text-center">{{ restaurant.name }}</h3>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Dashboard Statistics -->
+        <div class="col-md-4">
+            <div class="stats-card bg-primary text-white">
+                <h3>Tổng Đơn Hàng</h3>
+                <h2>{{ order_count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card bg-success text-white">
+                <h3>Doanh Thu</h3>
+                <h2>{{ revenue|floatformat:0 }} đ</h2>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card bg-info text-white">
+                <h3>Đơn Đang Giao</h3>
+                <h2>{{ delivering_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quản lý nhà hàng</h5>
+                    <div class="d-flex flex-wrap">
+                        <a href="{% url 'manage_dishes' %}" class="btn btn-primary m-2">
+                            <i class="fas fa-utensils"></i> Quản lý món ăn
+                        </a>
+                        <!-- Có thể thêm các nút khác ở đây -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Orders -->
+    <h2 class="section-title">Đơn Hàng Đang Xử Lý</h2>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Khách Hàng</th>
+                    <th>Món Ăn</th>
+                    <th>Tổng Tiền</th>
+                    <th>Trạng Thái</th>
+                    <th>Thời Gian</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.order_number }}</td>
+                    <td>{{ order.customer.user.first_name }}</td>
+                    <td>
+                        {% for item in order_items %}
+                            {% if item.order.id == order.id %}
+                                {{ item.dish.name }} x{{ item.quantity }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ order_items|calculate_order_total:order.id|floatformat:0 }} đ
+                    </td>
+                    <td>
+                        <div class="status-container">
+                            {% for delivery in deliveries %}
+                                {% if delivery.order.id == order.id %}
+                                    <span class="badge delivery-status
+                                        {% if delivery.status == 'PE' %}bg-secondary
+                                        {% elif delivery.status == 'CO' %}bg-info
+                                        {% elif delivery.status == 'PR' %}bg-primary
+                                        {% elif delivery.status == 'RP' %}bg-warning
+                                        {% elif delivery.status == 'PU' %}bg-warning
+                                        {% elif delivery.status == 'OW' %}bg-info
+                                        {% elif delivery.status == 'DE' %}bg-success
+                                        {% elif delivery.status == 'CA' %}bg-danger
+                                        {% endif %}">
+                                        {{ delivery.get_status_display }}
+                                    </span>
+                                    <!-- Không dùng break -->
+                                    {% if forloop.counter == 1 %}{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Trạng thái mặc định khi không có delivery -->
+                            <span class="badge bg-warning default-status">Đơn mới</span>
+                        </div>
+                    </td>
+                    <td>{{ order.ordered_on|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'restaurant_order_detail' order.order_number %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i> Chi tiết
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Không có đơn hàng đang xử lý</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Completed Orders -->
+    <h2 class="section-title">Đơn Hàng Đã Hoàn Thành</h2>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Khách Hàng</th>
+                    <th>Món Ăn</th>
+                    <th>Tổng Tiền</th>
+                    <th>Trạng Thái</th>
+                    <th>Thời Gian</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in completed_orders %}
+                <tr>
+                    <td>#{{ order.order_number }}</td>
+                    <td>{{ order.customer.user.first_name }}</td>
+                    <td>
+                        {% for item in completed_order_items %}
+                            {% if item.order.id == order.id %}
+                                {{ item.dish.name }} x{{ item.quantity }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ completed_order_items|calculate_order_total:order.id|floatformat:0 }} đ
+                    </td>
+                    <td>
+                        <span class="badge bg-success">Đã giao hàng</span>
+                    </td>
+                    <td>{{ order.ordered_on|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'restaurant_order_detail' order.order_number %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i> Chi tiết
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Không có đơn hàng đã hoàn thành</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Restaurant Info -->
+    <h2 class="section-title">Thông Tin Nhà Hàng</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ restaurant.name }}</h5>
+                    <p><strong>Địa chỉ:</strong> {{ restaurant.address }}</p>
+                    <p><strong>Điện thoại:</strong> {{ restaurant.phone }}</p>
+                    <p><strong>Giờ mở cửa:</strong> {{ restaurant.open_time|time:"H:i" }} - {{ restaurant.close_time|time:"H:i" }}</p>
+                    <p><strong>Mô tả:</strong> {{ restaurant.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tìm các container có cả hai loại trạng thái
+        document.querySelectorAll('.status-container').forEach(function(container) {
+            if (container.querySelector('.delivery-status')) {
+                // Nếu có trạng thái delivery, ẩn trạng thái mặc định
+                const defaultStatus = container.querySelector('.default-status');
+                if (defaultStatus) {
+                    defaultStatus.style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %} 

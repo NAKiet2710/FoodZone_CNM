@@ -1,0 +1,25 @@
+Sprint,Epic,Task,Người thực hiện,Story Points,Ngày bắt đầu,Ngày kết thúc,Trạng thái,Mô tả
+1,Hệ thống người dùng,Thiết kế ERD và cơ sở dữ liệu,Backend Developer,13,01/03/2023,07/03/2023,Done,Thiết kế mô hình quan hệ các bảng trong CSDL
+1,Hệ thống người dùng,Tạo models Django,Backend Developer,8,04/03/2023,09/03/2023,Done,Implement các models trong models.py
+1,Hệ thống người dùng,Tạo hệ thống đăng ký/đăng nhập,Backend Developer,8,08/03/2023,12/03/2023,Done,Implement views và forms cho chức năng đăng ký/đăng nhập
+1,Hệ thống người dùng,Thiết kế giao diện người dùng cơ bản,Frontend Developer,8,05/03/2023,13/03/2023,Done,Tạo templates cho trang chủ đăng ký đăng nhập
+2,Quản lý món ăn,Xây dựng chức năng thêm/sửa/xóa danh mục,Backend Developer,5,15/03/2023,18/03/2023,Done,Implement views và forms cho Category
+2,Quản lý món ăn,Xây dựng chức năng thêm/sửa/xóa món ăn,Backend Developer,8,18/03/2023,23/03/2023,Done,Implement views và forms cho Dish
+2,Quản lý món ăn,Thiết kế giao diện hiển thị danh mục và món ăn,Frontend Developer,8,15/03/2023,24/03/2023,Done,Tạo templates hiển thị danh sách món ăn và chi tiết
+2,Quản lý món ăn,Xây dựng tính năng tìm kiếm,Full-stack Developer,5,20/03/2023,25/03/2023,Done,Implement chức năng tìm kiếm món ăn
+3,Giỏ hàng & Đặt hàng,Xây dựng model Cart và CartItem,Backend Developer,5,01/04/2023,04/04/2023,Done,Implement models cho giỏ hàng
+3,Giỏ hàng & Đặt hàng,Phát triển chức năng thêm/xóa/cập nhật giỏ hàng,Backend Developer,8,04/04/2023,09/04/2023,Done,Implement views cho việc quản lý giỏ hàng
+3,Giỏ hàng & Đặt hàng,Thiết kế giao diện giỏ hàng,Frontend Developer,5,05/04/2023,10/04/2023,Done,Tạo template hiển thị giỏ hàng
+3,Giỏ hàng & Đặt hàng,Xây dựng luồng đặt hàng,Backend Developer,13,08/04/2023,15/04/2023,Done,Implement quy trình đặt hàng từ giỏ hàng
+4,Thanh toán,Tích hợp PayPal,Backend Developer,13,20/04/2023,30/04/2023,Done,Tích hợp PayPal Standard IPN
+4,Thanh toán,Xây dựng luồng thanh toán khi nhận hàng (COD),Backend Developer,8,22/04/2023,28/04/2023,Done,Implement quy trình thanh toán COD
+4,Giao hàng & Theo dõi,Phát triển chức năng quản lý địa chỉ giao hàng,Backend Developer,5,23/04/2023,27/04/2023,Done,Implement views để quản lý địa chỉ giao hàng
+4,Thanh toán,Thiết kế giao diện thanh toán,Frontend Developer,8,20/04/2023,28/04/2023,Done,Tạo templates cho trang thanh toán
+5,Giao hàng & Theo dõi,Xây dựng chức năng phân công shipper,Backend Developer,8,01/05/2023,08/05/2023,Done,Implement logic phân công shipper
+5,Giao hàng & Theo dõi,Phát triển chức năng cập nhật trạng thái đơn hàng,Backend Developer,8,05/05/2023,12/05/2023,Done,Implement views cập nhật trạng thái giao hàng
+5,Giao hàng & Theo dõi,Thiết kế giao diện theo dõi đơn hàng,Frontend Developer,8,04/05/2023,12/05/2023,Done,Tạo template hiển thị thông tin theo dõi
+5,Giao hàng & Theo dõi,Xây dựng dashboard cho shipper,Full-stack Developer,13,06/05/2023,15/05/2023,Done,Tạo dashboard để shipper quản lý đơn hàng
+6,Chatbot & Hỗ trợ,Tích hợp Google AI,Backend Developer,13,18/05/2023,25/05/2023,Done,Tích hợp Google AI cho chatbot
+6,Chatbot & Hỗ trợ,Xây dựng giao diện chatbot,Frontend Developer,8,18/05/2023,24/05/2023,Done,Thiết kế UI cho chatbot
+6,Tổng thể,Testing và sửa lỗi,Tester,13,20/05/2023,30/05/2023,Done,Kiểm thử toàn bộ hệ thống
+6,Tổng thể,Triển khai lên môi trường production,DevOps,8,25/05/2023,31/05/2023,Done,Cấu hình và triển khai hệ thống 
